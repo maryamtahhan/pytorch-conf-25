@@ -1,5 +1,6 @@
 # docker.io/rocm/vllm-dev:rocm6.3.4_navi3x_ubuntu24.04_py3.12_pytorch_2.4_vllm_0.7.2
-FROM rocm/vllm:rocm6.3.1_instinct_vllm0.7.3_20250325
+# FROM rocm/vllm:rocm6.3.1_instinct_vllm0.7.3_20250325
+FROM rocm/vllm-dev:nightly_main_20250212
 ARG ENTRYPOINT_PATH=image/entrypoint-vllm.sh
 # Install basic development tools
 RUN apt-get update && apt-get install -y \

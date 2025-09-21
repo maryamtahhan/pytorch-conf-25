@@ -6,7 +6,7 @@ metadata:
 spec:
   containers:
     - name: llama-container
-      image: quay.io/mtahhan/pytorch-conf-demo:vllm-old
+      image: quay.io/mtahhan/pytorch-conf-demo:vllm_nightly_main_20250212
       securityContext:
         seccompProfile:
           type: Unconfined
@@ -24,15 +24,17 @@ spec:
           value: "1"
         - name: VLLM_COMPILED_ATTENTION_BACKEND
           value: "1"
-        - name: VLLM_USE_V1
-          value: "1"
+        #- name: VLLM_USE_V1
+        #  value: "1"
         - name: HUGGING_FACE_HUB_TOKEN
           valueFrom:
             secretKeyRef:
               name: hf-token-secret
               key: token
-        # - name: EXTRA_ARGS
-        #   value: >-
+        - name: EXTRA_ARGS
+          value: >-
+            --max-model-len 8192
+            --max-num-batched-tokens 8192
         #     --tensor-parallel-size 1
         #     --gpu-memory-utilization 0.95
         #     --max-model-len 4096
