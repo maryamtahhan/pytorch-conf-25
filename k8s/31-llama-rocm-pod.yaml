@@ -10,7 +10,7 @@ spec:
       securityContext:
         seccompProfile:
           type: Unconfined
-      command: [./entrypoint-vllm.sh]
+      command: [/entrypoint-vllm.sh]
       ports:
         - containerPort: 9000
       env:

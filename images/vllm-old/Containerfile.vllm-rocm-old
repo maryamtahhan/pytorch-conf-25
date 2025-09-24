@@ -27,9 +27,11 @@ USER vllm
 
 # Make our entrypoint script executable
 
+WORKDIR /
 COPY --chown=vllm:vllm ${ENTRYPOINT_PATH} .
 RUN chmod +x entrypoint-vllm.sh
 
-ENTRYPOINT ["./entrypoint-vllm.sh"]
+WORKDIR /app
+ENTRYPOINT ["/entrypoint-vllm.sh"]
 
 # https://rocm.blogs.amd.com/software-tools-optimization/vllm-container/README.html
