@@ -291,17 +291,16 @@ case $MODE in
       $EXTRA_ARGS > "$LOG_PATH" 2>&1
     ;;
 
-  "benchmark")
+  "benchmark-throughput")
     gpu_probe
-    echo "Running vLLM benchmarks with model: $MODEL"
+    echo "Running vLLM throughput benchmark with model: $MODEL"
     echo "Additional arguments: $EXTRA_ARGS"
 
     # Create timestamped directory for this benchmark run
     TIMESTAMP=$(date +%Y%m%d_%H%M%S)
-    BENCHMARK_DIR="/data/benchmarks/$TIMESTAMP"
+    BENCHMARK_DIR="/data/benchmarks/throughput_$TIMESTAMP"
     mkdir -p "$BENCHMARK_DIR"
     THROUGHPUT_LOG="$BENCHMARK_DIR/throughput.log"
-    LATENCY_LOG="$BENCHMARK_DIR/latency.log"
 
     echo "Running throughput benchmark..."
     START_TIME=$(date +%s)
@@ -313,9 +312,45 @@ case $MODE in
       --max-num-batched-tokens "$MAX_BATCH_TOKENS" \
       --output-json "$BENCHMARK_DIR/throughput.json" \
       $EXTRA_ARGS 2>&1 | tee "$THROUGHPUT_LOG"
+    END_TIME=$(date +%s)
+    TOTAL_TIME=$((END_TIME - START_TIME))
     echo "Throughput benchmark complete - results saved in $BENCHMARK_DIR/throughput.json"
 
+    echo -e "\n===== Total Benchmark Runtime ====="
+    echo " Total time: ${TOTAL_TIME} seconds"
+    echo "==================================="
+
+    case "$BENCHMARK_SUMMARY_MODE" in
+      "table")
+        print_benchmark_summary_table "$BENCHMARK_DIR"
+        ;;
+      "graph")
+        print_benchmark_summary_graph "$BENCHMARK_DIR"
+        ;;
+      "none")
+        echo "Benchmark summary display disabled."
+        ;;
+      *)
+        echo "Unknown BENCHMARK_SUMMARY_MODE: $BENCHMARK_SUMMARY_MODE"
+        ;;
+    esac
+
+    echo "All results have been saved to $BENCHMARK_DIR"
+    ;;
+
+  "benchmark-latency")
+    gpu_probe
+    echo "Running vLLM latency benchmark with model: $MODEL"
+    echo "Additional arguments: $EXTRA_ARGS"
+
+    # Create timestamped directory for this benchmark run
+    TIMESTAMP=$(date +%Y%m%d_%H%M%S)
+    BENCHMARK_DIR="/data/benchmarks/latency_$TIMESTAMP"
+    mkdir -p "$BENCHMARK_DIR"
+    LATENCY_LOG="$BENCHMARK_DIR/latency.log"
+
     echo "Running latency benchmark..."
+    START_TIME=$(date +%s)
     python3 /app/vllm/benchmarks/benchmark_latency.py \
       --model "$MODEL" \
       --input-len "$INPUT_LEN" \
@@ -351,7 +386,7 @@ case $MODE in
 
   *)
     echo "Unknown mode: $MODE"
-    echo "Please use 'serve' or 'benchmark'"
+    echo "Please use 'serve', 'benchmark-throughput', or 'benchmark-latency'"
     exit 1
     ;;
 esac
