@@ -19,7 +19,7 @@ spec:
         - name: PORT
           value: "9000"
         - name: MODE
-          value: benchmark
+          value: benchmark-throughput
         - name: VLLM_USE_COMPILED_ATTENTION
           value: "1"
         - name: VLLM_COMPILED_ATTENTION_BACKEND
