@@ -6,7 +6,7 @@ metadata:
 spec:
   containers:
     - name: llama-container
-      image: quay.io/mtahhan/pytorch-conf-demo:vllm_nightly_main_20250212
+      image: quay.io/mtahhan/pytorch-conf-demo:vllm-old
       securityContext:
         seccompProfile:
           type: Unconfined
@@ -24,8 +24,8 @@ spec:
           value: "1"
         - name: VLLM_COMPILED_ATTENTION_BACKEND
           value: "1"
-        #- name: VLLM_USE_V1
-        #  value: "1"
+        - name: VLLM_USE_V1
+          value: "1"
         - name: HUGGING_FACE_HUB_TOKEN
           valueFrom:
             secretKeyRef:
