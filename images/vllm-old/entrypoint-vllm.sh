@@ -169,8 +169,6 @@ print_benchmark_summary_table() {
       ["Tokens/sec", fmt(.tokens_per_second)]
       | @tsv
     ' "$dir/throughput.json" | column -t -s $'\t'
-  else
-    echo "Throughput result file not found!"
   fi
 
   if [[ -f "$dir/latency.json" ]]; then
@@ -187,15 +185,17 @@ print_benchmark_summary_table() {
       ["P99", fmt(.percentiles["99"])]
       | @tsv
     ' "$dir/latency.json" | column -t -s $'\t'
-  else
-    echo "Latency result file not found!"
   fi
 
   echo "======================================"
 
   echo -e "\n===== Torch Compile Time Summary ====="
-  extract_compile_time "$dir/throughput.log" "throughput"
-  extract_compile_time "$dir/latency.log" "latency"
+  if [[ -f "$dir/throughput.log" ]]; then
+    extract_compile_time "$dir/throughput.log" "throughput"
+  fi
+  if [[ -f "$dir/latency.log" ]]; then
+    extract_compile_time "$dir/latency.log" "latency"
+  fi
   echo "======================================"
 
 }
@@ -213,8 +213,6 @@ print_benchmark_summary_graph() {
     echo "Tokens/sec:       $tps"
     echo "Total tokens:     $tokens"
     echo "Elapsed time (s): $time"
-  else
-    echo "Throughput result file not found!"
   fi
 
   local file="$dir/latency.json"
@@ -255,13 +253,14 @@ print_benchmark_summary_graph() {
 
     echo "========================================="
 
-    echo -e "\n===== Torch Compile Time Summary ====="
+  echo -e "\n===== Torch Compile Time Summary ====="
+  if [[ -f "$dir/throughput.log" ]]; then
     extract_compile_time "$dir/throughput.log" "throughput"
+  fi
+  if [[ -f "$dir/latency.log" ]]; then
     extract_compile_time "$dir/latency.log" "latency"
-    echo "======================================"
-
-  else
-    echo "Latency result file not found!"
+  fi
+  echo "======================================"
   fi
 }
 
